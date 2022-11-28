@@ -1,4 +1,4 @@
-// This file is Express Server //
+// This file is an Express Server //
 const connectToMongo = require('./dataBase'); // -> it is a function
 const express = require('express');
 const path = require('path');
@@ -8,6 +8,10 @@ const port = 3000;
 // request to connect with MongoDB //
 connectToMongo();
 
+// Middlware if we want to use "request body" //
+app.use(express.json());
+
+// index page for localhost:3000 //
 app.get('/',(req,res)=>{
     res.send(`<h1>Hello My Name is Abdeali</h1>`)
 })
