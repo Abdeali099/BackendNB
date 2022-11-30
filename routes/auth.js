@@ -9,22 +9,27 @@ const jwt = require('jsonwebtoken');
 // <-- JWT secret --> //
 const JWT_Secret = "Abdeali@786#123";
 
-// <-- validation array --> //
-const validationArray = [
+// <-- validation array for creation --> //
+const createValidation = [
     body('name', 'Enter valid name it must be minmum length of 3.').isLength({ min: 3 }),
     body('email', 'Enter valid Email.').isEmail(),
-    body('password', 'Enter strong password length must be minimum 6.').isLength({ min: 6 }),
+    body('password', 'Enter strong password length must be minimum 6.').isLength({ min: 6 })
+];
+
+// <-- validation array for login --> //
+const loginValidation = [
+    body('email', 'Enter valid Email.').isEmail(),
+    body('password', `Password can't be blank.`).exists()
 ];
 
 /* creating a user using : "POST" at "api/auth/createUser" (don't require authorization) */
-
-router.post('/createUser', validationArray, async (req, res) => {
-
-    /* <-- Adding validaion --> */
-
-    // Finds the validation errors in this request and wraps them in an object with handy functions. //
+router.post('/createUser', createValidation, async (req, res) => {
 
     try {
+
+        /* <-- Adding validaion --> */
+
+        // Finds the validation errors in this request and wraps them in an object with handy functions. //
 
         const errors = validationResult(req);
 
@@ -46,7 +51,7 @@ router.post('/createUser', validationArray, async (req, res) => {
 
         // console.log("salt is  : ",salt);
 
-        const securedPassword = await bcrypt.hash(req.body.password,salt);
+        const securedPassword = await bcrypt.hash(req.body.password, salt);
 
         // console.log("password is  : ",securedPassword);
 
@@ -59,15 +64,15 @@ router.post('/createUser', validationArray, async (req, res) => {
 
         /* <-- generating token --> */
 
-        const dataToSend={
-            newUserId : newUser.id
+        const dataToSend = {
+            newUserId: newUser.id
         }
 
-        const authToken = jwt.sign(dataToSend,JWT_Secret); // -> return promise (sync function)
+        const authToken = jwt.sign(dataToSend, JWT_Secret); // -> return promise (sync function)
 
         // console.log(authToken);        
 
-        res.json({authToken});
+        res.json({ authToken });
 
     } catch (error) {
 
@@ -103,4 +108,62 @@ router.post('/createUser', validationArray, async (req, res) => {
 
 })
 
+
+/* login a user using : "POST" at "api/auth/login" (require authorization) */
+router.post('/login', loginValidation, async (req, res) => {
+
+    try {
+
+        /* check validation */
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        /* destructuring to retrive email,password */
+        const { email, password } = req.body;
+
+        /* checking user exist or not by email */
+
+        let userExist = await User.findOne({ email });
+
+        if (!userExist) {
+
+            return res.status(400).json({ Message: "Please login with proper credintial" })
+
+        }
+
+        /* if email exist compare password */
+
+        let comparePassword = await bcrypt.compare(password, userExist.password);
+
+        if (!comparePassword) {
+
+            return res.status(400).json({ Message: "Please login with proper credintial" })
+
+        }
+
+        /* <-- generating token --> */
+
+        const dataToSend = {
+            newUserId: userExist.id
+        }
+
+        const authToken = jwt.sign(dataToSend, JWT_Secret); // -> return promise (sync function)
+
+        // console.log(authToken);        
+
+        res.json({ authToken });
+
+
+    } catch (error) {
+
+        console.log(error.message);
+
+        res.status(500).json({ error: error.message })
+
+    }
+
+})
 module.exports = router;
