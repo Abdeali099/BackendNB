@@ -18,10 +18,11 @@ const notesSchema = new mongoose.Schema({
     },
 
     date: {
-        type: date,
-        default: date.now
+        type: Date,
+        default: Date.now
     },
 
 });
 
-module.exports = mongoose.model('notes', notesSchema);
+const Notes=  mongoose.model('notes', notesSchema);
+module.exports = Notes;
