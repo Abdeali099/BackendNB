@@ -4,6 +4,7 @@ const { body, validationResult } = require('express-validator');
 const User = require('../models/modUser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const fetchUser = require('../middleware/fetchUser');
 
 
 // <-- JWT secret --> //
@@ -22,7 +23,7 @@ const loginValidation = [
     body('password', `Password can't be blank.`).exists()
 ];
 
-/* creating a user using : "POST" at "api/auth/createUser" (don't require authorization) */
+/* ROUTE 1 : creating a user using : "POST" at "api/auth/createUser" (don't require authorization) */
 router.post('/createUser', createValidation, async (req, res) => {
 
     try {
@@ -109,7 +110,7 @@ router.post('/createUser', createValidation, async (req, res) => {
 })
 
 
-/* login a user using : "POST" at "api/auth/login" (require authorization) */
+/* ROUTE 2 :  login a user using : "POST" at "api/auth/login" (require authorization) */
 router.post('/login', loginValidation, async (req, res) => {
 
     try {
@@ -147,7 +148,7 @@ router.post('/login', loginValidation, async (req, res) => {
         /* <-- generating token --> */
 
         const dataToSend = {
-            newUserId: userExist.id
+            userId: userExist.id
         }
 
         const authToken = jwt.sign(dataToSend, JWT_Secret); // -> return promise (sync function)
@@ -166,4 +167,30 @@ router.post('/login', loginValidation, async (req, res) => {
     }
 
 })
+
+/* ROUTE 3 : fetch data of logged in  user using : "POST" at "api/auth/user" (require authorization) */
+
+router.post('/user', fetchUser, async (req, res) => {
+
+    // -> whenever I required a login I have to use fetchUser middleware . //
+
+    try {
+
+        const userId = req.userId;
+
+        // console.log(userId);
+
+        const authorizedUser = await User.findById(userId).select("-password"); // -> it will select all data except password. //
+
+        res.json(authorizedUser);
+
+    } catch (error) {
+
+        console.log(error.message);
+
+        res.status(500).json({ error: error.message })
+    }
+
+})
+
 module.exports = router;
