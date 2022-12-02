@@ -65,4 +65,57 @@ router.post('/addNotes', fetchUser, addNoteValidation, async (req, res) => {
 
 })
 
+/* ROUTER 3 : update existing notes of logged in user using put at "api/notes/updateNotes/noteId"  -> Login Require */
+router.put('/updateNotes/:noteId', fetchUser, async (req, res) => {
+
+    try {
+
+        // retrive data from requst body //
+        const { title, content, tag } = req.body;
+
+        // creating a newNote object to upadate with it //
+        const newUpdateNote = {};
+
+        /* if below property changes add to in object */
+        if (title) {
+            newUpdateNote.title = title;
+        }
+
+        if (content) {
+            newUpdateNote.content = content;
+        }
+
+        if (tag) {
+            newUpdateNote.tag = tag;
+        }
+
+        /* find a note that have to be updated */
+        const toBeUpdateNote = await Notes.findById(req.params.noteId);
+
+        /* if note is not exist */
+        if (!toBeUpdateNote) {
+            return res.status(404).json({ error: "Note doesn't exist!" })
+        }
+
+        /* wheter user upadte his notes or not. */
+        if (toBeUpdateNote.user.toString() != req.userId) {
+            return res.status(401).json({ error: "This activity dont' allowed." })
+        }
+
+        /* everything is clear so now update */
+
+        const updatedNote = await Notes.findByIdAndUpdate(req.params.noteId, { $set: newUpdateNote }, { new: true });
+
+        res.json(updatedNote);
+
+
+    } catch (error) {
+
+        console.log(error.message);
+
+        res.status(400).json({ error: "unkonwn error in Update! Try again!!" })
+    }
+
+})
+
 module.exports = router; 
