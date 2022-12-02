@@ -97,7 +97,7 @@ router.put('/updateNotes/:noteId', fetchUser, async (req, res) => {
             return res.status(404).json({ error: "Note doesn't exist!" })
         }
 
-        /* wheter user upadte his notes or not. */
+        /* Note is exist but check  wheter user upadte his notes or not. */
         if (toBeUpdateNote.user.toString() != req.userId) {
             return res.status(401).json({ error: "This activity dont' allowed." })
         }
@@ -111,6 +111,37 @@ router.put('/updateNotes/:noteId', fetchUser, async (req, res) => {
         console.log(error.message);
 
         res.status(400).json({ error: "unkonwn error in Update! Try again!!" })
+    }
+
+})
+
+/* ROUTER 4 : delete existing notes of logged in user using delete at "api/notes/deleteNotes/noteId"  -> Login Require */
+router.delete('/deleteNotes/:noteId', fetchUser, async (req, res) => {
+
+    try {
+
+        /* find a note that have to be deleted */
+        const toBeDeleteNote = await Notes.findById(req.params.noteId);
+
+        /* if note is not exist */
+        if (!toBeDeleteNote) {
+            return res.status(404).json({ error: "Note doesn't exist!" })
+        }
+
+        /* Note is exist but check wheter user delete his notes or not. */
+        if (toBeDeleteNote.user.toString() != req.userId) {
+            return res.status(401).json({ error: "This activity dont' allowed." })
+        }
+
+        /* everything is clear so now delete */
+        const deletedNote = await Notes.findByIdAndDelete(req.params.noteId);
+        res.json({Success:"Note has been deleted"});
+
+    } catch (error) {
+
+        console.log(error.message);
+
+        res.status(400).json({ error: "unkonwn error in Deletion ! Try again!!" })
     }
 
 })
