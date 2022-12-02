@@ -22,7 +22,7 @@ router.get('/fetchNotes', fetchUser, async (req, res) => {
 
         console.log(error.message);
 
-        res.status.json({ error: "unkonwn error! Try again!!" })
+        res.status.json({ error: "unkonwn error in fetching! Try again!!" })
     }
 
 })
@@ -60,7 +60,7 @@ router.post('/addNotes', fetchUser, addNoteValidation, async (req, res) => {
 
         console.log(error.message);
 
-        res.status.json({ error: "unkonwn error! Try again!!" })
+        res.status.json({ error: "unkonwn error in addition! Try again!!" })
     }
 
 })
@@ -103,11 +103,8 @@ router.put('/updateNotes/:noteId', fetchUser, async (req, res) => {
         }
 
         /* everything is clear so now update */
-
         const updatedNote = await Notes.findByIdAndUpdate(req.params.noteId, { $set: newUpdateNote }, { new: true });
-
         res.json(updatedNote);
-
 
     } catch (error) {
 
