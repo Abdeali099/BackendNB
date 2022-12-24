@@ -21,5 +21,5 @@ app.use('/api/auth',require(path.join(__dirname,"./routes/auth")));
 app.use('/api/notes',require(path.join(__dirname,"./routes/notes")));
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`iNoteBook Backend listening on port http://localhost:${port}`)
 })

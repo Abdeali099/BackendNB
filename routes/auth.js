@@ -73,7 +73,7 @@ router.post('/createUser', createValidation, async (req, res) => {
 
         // console.log(authToken);        
 
-        res.json({ authToken });
+        res.status(200).json({ authToken });
 
     } catch (error) {
 
@@ -110,7 +110,7 @@ router.post('/createUser', createValidation, async (req, res) => {
 })
 
 
-/* ROUTE 2 :  login a user using : "POST" at "api/auth/login" (require authorization) */
+/* ROUTE 2 :  login a user using : "POST" at "api/auth/login" (don't require authorization) */
 router.post('/login', loginValidation, async (req, res) => {
 
     try {
@@ -139,7 +139,7 @@ router.post('/login', loginValidation, async (req, res) => {
 
         let comparePassword = await bcrypt.compare(password, userExist.password);
 
-        if (!comparePassword) {
+        if (!comparePassword) { /* how? : !comparePassword => !true=false && !false=true */
 
             return res.status(400).json({ Message: "Please login with proper credintial" })
 

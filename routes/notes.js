@@ -42,17 +42,24 @@ router.post('/addNotes', fetchUser, addNoteValidation, async (req, res) => {
         // retrive data from requst body //
 
         const tempNotesOBJ = {
-
             user: req.userId,
             title: req.body.title,
             content: req.body.content,
             tag: req.body.tag
-
         }
+
+
 
         const notes = new Notes(tempNotesOBJ);
 
         const savedNotes = await notes.save();
+
+        // you can also do //
+
+        /* 
+             const savedNotes = await Notes.create(tempNotesOBJ);
+        
+        */
 
         res.json(savedNotes)
 
@@ -99,7 +106,7 @@ router.put('/updateNotes/:noteId', fetchUser, async (req, res) => {
 
         /* Note is exist but check  wheter user upadte his notes or not. */
         if (toBeUpdateNote.user.toString() != req.userId) {
-            return res.status(401).json({ error: "This activity dont' allowed." })
+            return res.status(401).json({ error: "This activity is not allowed." })
         }
 
         /* everything is clear so now update */
@@ -110,7 +117,7 @@ router.put('/updateNotes/:noteId', fetchUser, async (req, res) => {
 
         console.log(error.message);
 
-        res.status(400).json({ error: "unkonwn error in Update! Try again!!" })
+        res.status(400).json({ error: "unkonwn error in Updation! Try again!!" })
     }
 
 })
@@ -130,7 +137,7 @@ router.delete('/deleteNotes/:noteId', fetchUser, async (req, res) => {
 
         /* Note is exist but check wheter user delete his notes or not. */
         if (toBeDeleteNote.user.toString() != req.userId) {
-            return res.status(401).json({ error: "This activity dont' allowed." })
+            return res.status(401).json({ error: "This activity not allowed." })
         }
 
         /* everything is clear so now delete */
