@@ -4,6 +4,10 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const port = 5000;
+const cors = require('cors')
+
+// if we want to use local API or call API from brwoser than this middalware is needed //
+app.use(cors());
 
 // request to connect with MongoDB //
 connectToMongo();
