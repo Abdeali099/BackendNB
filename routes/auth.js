@@ -20,8 +20,11 @@ const createValidation = [
 // <-- validation array for login --> //
 const loginValidation = [
     body('email', 'Enter valid Email.').isEmail(),
-    body('password', `Password can't be blank.`).exists()
+    body('password', `Password can't be blank.`).exists().isLength({min:6})
 ];
+
+// <--- Success of API call --> //
+let Success = false;
 
 /* ROUTE 1 : creating a user using : "POST" at "api/auth/createUser" (don't require authorization) */
 router.post('/createUser', createValidation, async (req, res) => {
@@ -35,7 +38,7 @@ router.post('/createUser', createValidation, async (req, res) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return res.status(400).json({Success, Success,errors: errors.array() });
         }
 
         // <-- check whether user already exist or not with same email -->
@@ -43,7 +46,7 @@ router.post('/createUser', createValidation, async (req, res) => {
         let userExist = await User.findOne({ email: req.body.email });
 
         if (userExist) {
-            return res.status(400).json({ error: "User already exists." })
+            return res.status(400).json({Success,Error: "User already exists." })
         }
 
         // <-- Securing Password --> //
@@ -73,13 +76,13 @@ router.post('/createUser', createValidation, async (req, res) => {
 
         // console.log(authToken);        
 
-        res.status(200).json({ authToken });
+        res.status(200).json({Success:true, authToken });
 
     } catch (error) {
 
         console.error(error.message);
 
-        res.status(500).json({ error: error.message })
+        res.status(500).json({Success, Success,Error: error.message })
 
     }
 
@@ -90,7 +93,7 @@ router.post('/createUser', createValidation, async (req, res) => {
            email: req.body.email,
            password: req.body.password,
        }).then(newUser => res.json(newUser))
-           .catch(error => res.json({ msg: "User already exist.", "error": error })); */
+           .catch(error => res.json({Success, msg: "User already exist.", "error": error })); */
 
 
     /* <--- without validation  --->
@@ -119,7 +122,7 @@ router.post('/login', loginValidation, async (req, res) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return res.status(400).json({Success, errors: errors.array() });
         }
 
         /* destructuring to retrive email,password */
@@ -131,7 +134,7 @@ router.post('/login', loginValidation, async (req, res) => {
 
         if (!userExist) {
 
-            return res.status(400).json({ Message: "Please login with proper credintial" })
+            return res.status(400).json({Success, Error: "Please login with proper credintial" })
 
         }
 
@@ -141,7 +144,7 @@ router.post('/login', loginValidation, async (req, res) => {
 
         if (!comparePassword) { /* how? : !comparePassword => !true=false && !false=true */
 
-            return res.status(400).json({ Message: "Please login with proper credintial" })
+            return res.status(400).json({Success, Error: "Please login with proper credintial" })
 
         }
 
@@ -155,14 +158,14 @@ router.post('/login', loginValidation, async (req, res) => {
 
         // console.log(authToken);        
 
-        res.json({ authToken });
+        res.json({Success:true, authToken });
 
 
     } catch (error) {
 
         console.log(error.message);
 
-        res.status(500).json({ error: error.message })
+        res.status(500).json({Success, Error: error.message })
 
     }
 
@@ -182,13 +185,13 @@ router.post('/user', fetchUser, async (req, res) => {
 
         const authorizedUser = await User.findById(userId).select("-password"); // -> it will select all data except password. //
 
-        res.json(authorizedUser);
+        res.json({Success:true,authorizedUser});
 
     } catch (error) {
 
         console.log(error.message);
 
-        res.status(500).json({ error: error.message })
+        res.status(500).json({Success, Error: error.message })
     }
 
 })
