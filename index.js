@@ -15,7 +15,7 @@ connectToMongo();
 // Middlware if we want to use "request body" //
 app.use(express.json());
 
-// index page for localhost:3000 //
+// index page for localhost:5000 //
 app.get('/',(req,res)=>{
     res.send(`<h1>Hello My Name is Abdeali</h1>`)
 })
