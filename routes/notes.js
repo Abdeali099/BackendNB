@@ -1,7 +1,13 @@
 const express = require('express');
 const router = express.Router();
+
+/* Validation for Request Header  */
 const { body, validationResult } = require('express-validator');
+
+/* Notes Modal  */
 const Notes = require('../models/modNotes');
+
+/* whenever Login Require this middlware will be used */
 const fetchUser = require('../middleware/fetchUser');
 
 // <-- validation array for creation --> //
@@ -11,7 +17,7 @@ const addNoteValidation = [
 ];
 
 
-// <--- Success of API call --> //
+// <--- Result of API call (by default is "False" ) --> //
 let Success = false;
 
 /* ROUTER 1 : fetch all notes of logged in user using GET at "api/notes/fetchNotes"  -> Login Require */
@@ -20,13 +26,11 @@ router.get('/fetchNotes', fetchUser, async (req, res) => {
     try {
         const allNotes = await Notes.find({ user: req.userId })
 
-        res.json({Success:true,allNotes});
+        res.json({ Success: true, allNotes });
 
     } catch (error) {
-
         
-
-        res.status.json({Success, error: "unkonwn error in fetching! Try again!!" })
+        res.status.json({ Success, error: "unkonwn error in fetching! Try again!!" })
     }
 
 })
@@ -40,7 +44,7 @@ router.post('/addNotes', fetchUser, addNoteValidation, async (req, res) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(400).json({Success, errors: errors.array() });
+            return res.status(400).json({ Success, errors: errors.array() });
         }
 
         // retrive data from requst body //
@@ -56,20 +60,18 @@ router.post('/addNotes', fetchUser, addNoteValidation, async (req, res) => {
 
         const savedNotes = await notes.save();
 
-        // you can also do //
+        // you can also do this //
 
         /* 
              const savedNotes = await Notes.create(tempNotesOBJ);
         
         */
 
-        res.json({Success:true,savedNotes})
+        res.json({ Success: true, savedNotes })
 
     } catch (error) {
 
-        
-
-        res.status.json({Success, error: "unkonwn error in addition! Try again!!" })
+        res.status.json({ Success, error: "unkonwn error in addition! Try again!!" })
     }
 
 })
@@ -103,21 +105,21 @@ router.put('/updateNotes/:noteId', fetchUser, async (req, res) => {
 
         /* if note is not exist */
         if (!toBeUpdateNote) {
-            return res.status(404).json({Success, error: "Note doesn't exist!" })
+            return res.status(404).json({ Success, error: "Note doesn't exist!" })
         }
 
         /* Note is exist but check  wheter user upadte his notes or not. */
         if (toBeUpdateNote.user.toString() != req.userId) {
-            return res.status(401).json({Success, error: "This activity is not allowed." })
+            return res.status(401).json({ Success, error: "This activity is not allowed." })
         }
 
         /* everything is clear so now update */
         const updatedNote = await Notes.findByIdAndUpdate(req.params.noteId, { $set: newUpdateNote }, { new: true });
-        res.json({Success:true,updatedNote});
+        res.json({ Success: true, updatedNote });
 
     } catch (error) {
 
-        res.status(400).json({Success, error: "unkonwn error in Updation! Try again!!" })
+        res.status(400).json({ Success, error: "unkonwn error in Updation! Try again!!" })
     }
 
 })
@@ -132,21 +134,21 @@ router.delete('/deleteNotes/:noteId', fetchUser, async (req, res) => {
 
         /* if note is not exist */
         if (!toBeDeleteNote) {
-            return res.status(404).json({Success, error: "Note doesn't exist!" })
+            return res.status(404).json({ Success, error: "Note doesn't exist!" })
         }
 
         /* Note is exist but check wheter user delete his notes or not. */
         if (toBeDeleteNote.user.toString() != req.userId) {
-            return res.status(401).json({Success, error: "This activity not allowed." })
+            return res.status(401).json({ Success, error: "This activity not allowed." })
         }
 
         /* everything is clear so now delete */
         const deletedNote = await Notes.findByIdAndDelete(req.params.noteId);
-        res.json({Success:true,Success:"Note has been deleted"});
+        res.json({ Success: true, Success: "Note has been deleted" });
 
     } catch (error) {
 
-        res.status(400).json({Success, error: "unkonwn error in Deletion ! Try again!!" })
+        res.status(400).json({ Success, error: "unkonwn error in Deletion ! Try again!!" })
     }
 
 })

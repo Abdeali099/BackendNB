@@ -1,9 +1,17 @@
 const express = require('express');
 const router = express.Router();
+
+/* Validation for Request Header  */
 const { body, validationResult } = require('express-validator');
+
+/* User Modal  */
 const User = require('../models/modUser');
+
+/* For Authentication  */
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+/* whenever Login Require this middlware will be used */
 const fetchUser = require('../middleware/fetchUser');
 
 
@@ -23,7 +31,7 @@ const loginValidation = [
     body('password', `Password can't be blank.`).exists().isLength({min:6})
 ];
 
-// <--- Success of API call --> //
+// <--- Result of API call (by default is "False" ) --> //
 let Success = false;
 
 /* ROUTE 1 : creating a user using : "POST" at "api/auth/createUser" (don't require authorization) */
@@ -38,7 +46,7 @@ router.post('/createUser', createValidation, async (req, res) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(400).json({Success, Success,errors: errors.array() });
+            return res.status(400).json({Success,errors: errors.array() });
         }
 
         // <-- check whether user already exist or not with same email -->
@@ -53,11 +61,7 @@ router.post('/createUser', createValidation, async (req, res) => {
 
         const salt = await bcrypt.genSalt(10); // -> generate salts. (10 represent)
 
-        // console.log("salt is  : ",salt);
-
         const securedPassword = await bcrypt.hash(req.body.password, salt);
-
-        // console.log("password is  : ",securedPassword);
 
         /* Creating user using mongoose model */
         let newUser = await User.create({
@@ -82,7 +86,7 @@ router.post('/createUser', createValidation, async (req, res) => {
 
         console.error(error.message);
 
-        res.status(500).json({Success, Success,Error: error.message })
+        res.status(500).json({Success,Error: error.message })
 
     }
 

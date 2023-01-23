@@ -1,0 +1,18 @@
+=> First  Made Index.js File. (This will be an Express Server.)
+
+=> Then Made dataBase.js file which is Help to connect with MongoDB using mongoose.
+
+  -> https://www.mongodb.com/developer/languages/javascript/mongoose-versus-nodejs-driver/ (mongoose)
+
+  -> Mongoose is a Node.js-based Object Data Modeling (ODM) library for MongoDB. It is akin to an Object Relational  Mapper (ORM) such as SQLAlchemy for traditional SQL databases. The problem that Mongoose aims to solve is allowing  developers to enforce a specific schema at the application layer. In addition to enforcing a schema, Mongoose also offers a variety of hooks, model validation, and other features aimed at making it easier to work with MongoDB.
+
+=> Made Modal (Schema) of Notes and Users in models folder.  
+
+=> First made routes for authorization in auth.js
+
+=> For whenever login require made middalware "fetchUser.js".
+    
+     ->  get the userId by jwt token and put it to reqest body (object).
+
+=> made routes for Notes CRUD operation in notes.js
+    

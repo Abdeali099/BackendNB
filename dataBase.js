@@ -11,4 +11,4 @@ const connectToMongo = () => {
     })
 }
 
-module.exports = connectToMongo;
+module.exports = connectToMongo; /* we use JS module instead of ES6 module  because it is NodeJs */
