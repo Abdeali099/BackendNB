@@ -160,7 +160,6 @@ router.post('/login', loginValidation, async (req, res) => {
 
         const authToken = jwt.sign(dataToSend, JWT_Secret); // -> return promise (sync function)
 
-        // console.log(authToken);        
 
         res.json({Success:true, authToken });
 
