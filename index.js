@@ -17,7 +17,7 @@ app.use(express.json());
 
 // index page for localhost:5000 //
 app.get('/',(req,res)=>{
-    res.send(`<h1>Hello My Name is Abdeali</h1>`)
+    res.send(`<h1>Backend Server for inotebook </h1>`)
 })
 
 // sending to routes (avialable routes) //

@@ -25,6 +25,6 @@ const userSchema = new mongoose.Schema({
 
 });
 
-const User= mongoose.model('user',userSchema);
+const User= mongoose.model('users',userSchema);
 // User.createIndexes(); // -> to maintain uniqueness in collection's document.
 module.exports = User;

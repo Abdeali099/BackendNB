@@ -73,8 +73,10 @@ router.post('/createUser', createValidation, async (req, res) => {
         /* <-- generating token --> */
 
         const dataToSend = {
-            newUserId: newUser.id
+            userId: newUser._id
         }
+
+        /* I misatke here i give name as "newUserId" instead of userId */
 
         const authToken = jwt.sign(dataToSend, JWT_Secret); // -> return promise (sync function)
 
@@ -155,7 +157,7 @@ router.post('/login', loginValidation, async (req, res) => {
         /* <-- generating token --> */
 
         const dataToSend = {
-            userId: userExist.id
+            userId: userExist._id
         }
 
         const authToken = jwt.sign(dataToSend, JWT_Secret); // -> return promise (sync function)

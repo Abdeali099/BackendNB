@@ -29,8 +29,8 @@ router.get('/fetchNotes', fetchUser, async (req, res) => {
         res.json({ Success: true, allNotes });
 
     } catch (error) {
-        
-        res.status.json({ Success, error: "unkonwn error in fetching! Try again!!" })
+
+        res.status(500).json({ Success, error: "unkonwn error in fetching! Try again!!" })
     }
 
 })
@@ -56,9 +56,16 @@ router.post('/addNotes', fetchUser, addNoteValidation, async (req, res) => {
             tag: req.body.tag
         }
 
+        console.log("\n => temp object : ", tempNotesOBJ);
+
+
         const notes = new Notes(tempNotesOBJ);
 
         const savedNotes = await notes.save();
+
+        console.log("\n => saved notes : ", savedNotes);
+
+
 
         // you can also do this //
 
@@ -71,7 +78,7 @@ router.post('/addNotes', fetchUser, addNoteValidation, async (req, res) => {
 
     } catch (error) {
 
-        res.status.json({ Success, error: "unkonwn error in addition! Try again!!" })
+        res.status(500).json({ Success, error: "unkonwn error in addition! Try again!!" })
     }
 
 })
